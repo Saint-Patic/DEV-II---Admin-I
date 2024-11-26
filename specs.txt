@@ -1,0 +1,153 @@
+class Fraction:
+    """Class representing a fraction and operations on it
+
+    Author : V. Van den Schrieck
+    Date : October 2021
+    This class allows fraction manipulations through several operations.
+    """
+
+    def __init__(self, num=0, den=1):
+        """This builds a fraction based on some numerator and denominator.
+
+        PRE : num est un entier positif
+              den est un entier positif
+        POST : self.num est initialisé avec la valeur de num
+               self.den est initialisé avec la valeur de den
+        """
+
+    @property
+    def numerator(self):
+        """Returns the numerator of the fraction.
+
+        PRE : Une instance de Fraction
+        POST : Retourne le numérateur de la fraction (self.num)
+        """
+
+    @property
+    def denominator(self):
+        """Returns the denominator of the fraction.
+
+        PRE : Une instance de Fraction
+        POST : Retourne le dénominateur de la fraction (self.den)
+        """
+
+    # ------------------ Textual representations ------------------
+
+    def __str__(self):
+        """Return a textual representation of the reduced form of the fraction
+
+        PRE : /
+        POST : Retourne une chaîne de caractères au format "num/den" après réduction de la fraction
+        """
+
+
+    def as_mixed_number(self):
+        """Return a textual representation of the reduced form of the fraction as a mixed number
+
+        A mixed number is the sum of an integer and a proper fraction.
+
+        PRE : /
+        POST : Retourne une chaîne au format "Partie entière : <entier> | Reste : <reste sous forme réduite>"
+        """
+
+
+    # ------------------ Operators overloading ------------------
+
+    def __add__(self, other):
+        """Overloading of the + operator for fractions
+
+        PRE : other est une instance de Fraction
+        POST : Retourne une nouvelle instance de Fraction représentant la somme des deux fractions
+        """
+
+
+    def __sub__(self, other):
+        """Overloading of the - operator for fractions
+
+        PRE : other est une instance de Fraction
+        POST : Retourne une nouvelle instance de Fraction représentant la différence entre les deux fractions
+        """
+
+
+    def __mul__(self, other):
+        """Overloading of the * operator for fractions
+
+        PRE : other est une instance de Fraction
+        POST : Retourne une nouvelle instance de Fraction représentant le produit des deux fractions
+        """
+
+
+    def __truediv__(self, other):
+        """Overloading of the / operator for fractions
+
+        PRE : other est une instance de Fraction
+        POST : Retourne une nouvelle instance de Fraction représentant le quotient des deux fractions
+        """
+
+
+    def __pow__(self, other):
+        """Overloading of the ** operator for fractions
+
+        PRE : other est un entier
+        POST : Retourne une nouvelle instance de Fraction représentant la fraction élevée à la puissance `other`
+        """
+
+
+    def __eq__(self, other):
+        """Overloading of the == operator for fractions
+
+        PRE : other est une instance de Fraction
+        POST : Retourne True si les deux fractions sont égales, sinon False
+        """
+
+
+    def __float__(self):
+        """Returns the decimal value of the fraction
+
+        PRE : /
+        POST : Retourne la valeur décimale de la fraction (numérateur / dénominateur)
+        """
+
+
+    # ------------------ Properties checking ------------------
+
+    def is_zero(self):
+        """Check if a fraction's value is 0
+
+        PRE : Une instance de Fraction
+        POST : Retourne True si la fraction est égale à 0, sinon False
+        """
+
+
+    def is_integer(self):
+        """Check if a fraction is integer (ex : 8/4, 3, 2/2, ...)
+
+        PRE : Une instance de Fraction
+        POST : Retourne True si la fraction est un entier, sinon False
+        """
+
+
+    def is_proper(self):
+        """Check if the absolute value of the fraction is < 1
+
+        PRE : Une instance de Fraction
+        POST : Retourne True si |num| < |den|, sinon False
+        """
+
+
+    def is_unit(self):
+        """Check if a fraction's numerator is 1 in its reduced form
+
+        PRE : Une instance de Fraction
+        POST : Retourne True si num == 1, sinon False
+        """
+
+
+    def is_adjacent_to(self, other):
+        """Check if two fractions differ by a unit fraction
+
+        Two fractions are adjacents if the absolute value of the difference is a unit fraction
+
+        PRE : deux instances de Fraction
+        POST : Retourne True si les deux fractions sont adjacentes, sinon False
+        """
