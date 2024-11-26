@@ -198,7 +198,10 @@ class Fraction:
         PRE : deux instances de Fraction
         POST : Retourne True si les deux fractions sont adjacentes, sinon False
         """
-        pass
+        numDiff = abs(self.num * other.den - other.num * self.den)
+        denDiff = self.den * other.den
+
+        return numDiff == 1 and denDiff > 0
 
 
 if __name__ == "__main__":
@@ -206,8 +209,15 @@ if __name__ == "__main__":
     fract2 = Fraction(1, 2)
     exposant = 3
 
+    # ------------------ Textual representations ------------------
+
+    print(fract1)
+    print(fract2)
     print(fract1.as_mixed_number())
-    print(fract2.as_mixed_number())
+    print(fract2.as_mixed_number(),"\n")
+
+    # ------------------ Operators overloading ------------------
+
     print(f"Addition : {fract1.numerator}/{fract1.denominator} + {fract2.numerator}/{fract2.denominator} = {fract1 + fract2}")
     print(f"Soustraction : {fract1.numerator}/{fract1.denominator} - {fract2.numerator}/{fract2.denominator} = {fract1 - fract2}")
     print(f"Multiplication : {fract1.numerator}/{fract1.denominator} * {fract2.numerator}/{fract2.denominator} = {fract1 * fract2}")
@@ -215,4 +225,12 @@ if __name__ == "__main__":
     print(f"Soustraction : ({fract1.numerator}/{fract1.denominator})^{exposant} = {fract1 ** exposant}")
     print(f"Egalité : {fract1.numerator}/{fract1.denominator} == {fract2.numerator}/{fract2.denominator} = {fract1 == fract2}")
     print(f"Décimale de {fract1.numerator}/{fract1.denominator} = {fract1.__float__()}")
-    print(f"Décimale de {fract2.numerator}/{fract2.denominator} = {fract2.__float__()}")
+    print(f"Décimale de {fract2.numerator}/{fract2.denominator} = {fract2.__float__()}","\n")
+
+    # ------------------ Properties checking ------------------
+
+    print(f"Check if {fract1.numerator}/{fract1.denominator} value is 0 : ", fract1.is_zero())
+    print(f"Check if {fract1.numerator}/{fract1.denominator} is integer : ", fract1.is_integer())
+    print(f"Check if the absolute value of {fract1.numerator}/{fract1.denominator} is < 1 : ", fract1.is_proper())
+    print(f"Check if {fract1.numerator}/{fract1.denominator} numerator is 1 in its reduced form : ", fract1.is_unit())
+    print(f"Check if {fract1.numerator}/{fract1.denominator} and {fract2.numerator}/{fract2.denominator} differ by a unit fraction : ", fract1.is_adjacent_to(fract2))
