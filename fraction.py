@@ -1,3 +1,5 @@
+import math
+
 class Fraction:
     """Class representing a fraction and operations on it
 
@@ -45,15 +47,10 @@ class Fraction:
         PRE : /
         POST : Retourne une chaîne de caractères au format "num/den" après réduction de la fraction
         """
-        a, b = abs(self.num), abs(self.den)
-        while b != 0:
-            a, b = b, a % b
-        gcd = a
-
-        numReduit = self.num // gcd
-        denReduit = self.den // gcd
-
-        return f"{numReduit}/{denReduit}"
+        gcd = math.gcd(self.num, self.den)
+        num_reduit = self.num // gcd
+        den_reduit = self.den // gcd
+        return f"{num_reduit}/{den_reduit}"
 
     def as_mixed_number(self):
         """Return a textual representation of the reduced form of the fraction as a mixed number
@@ -63,22 +60,15 @@ class Fraction:
         PRE : /
         POST : Retourne une chaîne au format "Partie entière : <entier> | Reste : <reste sous forme réduite>"
         """
-        # Calcul du PGCD pour réduire la fraction
-        a, b = abs(self.num), abs(self.den)
-        while b != 0:
-            a, b = b, a % b
-        gcd = a
+        gcd = math.gcd(self.num, self.den)
+        num_reduit = self.num // gcd
+        den_reduit = self.den // gcd
+        part_entier = num_reduit // den_reduit
+        reste_num = abs(num_reduit % den_reduit)
 
-        numReduit = self.num // gcd
-        denReduit = self.den // gcd
-
-        # Calcul de la partie entière et du reste
-        partEntier = numReduit // denReduit
-        resteNum = abs(numReduit % denReduit)
-
-        if resteNum == 0:
-            return f"Partie entière : {partEntier} | Reste : 0"
-        return f"Partie entière : {partEntier} | Reste : {resteNum}/{denReduit}"
+        if reste_num == 0:
+            return f"Partie entière : {part_entier} | Reste : 0"
+        return f"Partie entière : {part_entier} | Reste : {reste_num}/{den_reduit}"
 
     # ------------------ Operators overloading ------------------
 
@@ -88,15 +78,9 @@ class Fraction:
         PRE : other est une instance de Fraction
         POST : Retourne une nouvelle instance de Fraction représentant la somme des deux fractions
         """
-        a, b = self.den, other.den
-        while b != 0:
-            a, b = b, a % b
-        gcd = a
-        lcm = (self.den * other.den) // gcd
-
+        lcm = (self.den * other.den) // math.gcd(self.den, other.den)
         num1 = self.num * (lcm // self.den)
         num2 = other.num * (lcm // other.den)
-
         return Fraction(num1 + num2, lcm)
 
     def __sub__(self, other):
@@ -105,15 +89,9 @@ class Fraction:
         PRE : other est une instance de Fraction
         POST : Retourne une nouvelle instance de Fraction représentant la différence entre les deux fractions
         """
-        a, b = self.den, other.den
-        while b != 0:
-            a, b = b, a % b
-        gcd = a
-        lcm = (self.den * other.den) // gcd
-
+        lcm = (self.den * other.den) // math.gcd(self.den, other.den)
         num1 = self.num * (lcm // self.den)
         num2 = other.num * (lcm // other.den)
-
         return Fraction(num1 - num2, lcm)
 
     def __mul__(self, other):
@@ -146,7 +124,7 @@ class Fraction:
         PRE : other est une instance de Fraction
         POST : Retourne True si les deux fractions sont égales, sinon False
         """
-        return self.num == other.num and self.den == other.den or self.num//self.den == other.num//other.den
+        return self.num == other.num and self.den == other.den or self.num // self.den == other.num // other.den
 
     def __float__(self):
         """Returns the decimal value of the fraction
@@ -188,7 +166,8 @@ class Fraction:
         PRE : Une instance de Fraction
         POST : Retourne True si num == 1, sinon False
         """
-        return self.num == 1
+        gcd = math.gcd(self.num, self.den)
+        return (self.num // gcd) == 1
 
     def is_adjacent_to(self, other):
         """Check if two fractions differ by a unit fraction
@@ -198,10 +177,9 @@ class Fraction:
         PRE : deux instances de Fraction
         POST : Retourne True si les deux fractions sont adjacentes, sinon False
         """
-        numDiff = abs(self.num * other.den - other.num * self.den)
-        denDiff = self.den * other.den
-
-        return numDiff == 1 and denDiff > 0
+        num_diff = abs(self.num * other.den - other.num * self.den)
+        den_diff = self.den * other.den
+        return num_diff == 1 and den_diff > 0
 
 
 if __name__ == "__main__":
