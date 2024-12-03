@@ -17,7 +17,10 @@ class Fraction:
                self.den est initialisé avec la valeur de den
         """
         if den == 0:
-            raise ValueError("Le dénominateur ne peut pas être égal à zéro.")
+            raise ZeroDivisionError("Le dénominateur ne peut pas être égal à zéro.")
+        if den < 0:
+            num = -num
+            den = -den
         self.num = num
         self.den = den
 
@@ -124,7 +127,7 @@ class Fraction:
         PRE : other est une instance de Fraction
         POST : Retourne True si les deux fractions sont égales, sinon False
         """
-        return self.num == other.num and self.den == other.den or self.num // self.den == other.num // other.den
+        return self.num // self.den == other.num // other.den
 
     def __float__(self):
         """Returns the decimal value of the fraction
@@ -166,8 +169,7 @@ class Fraction:
         PRE : Une instance de Fraction
         POST : Retourne True si num == 1, sinon False
         """
-        gcd = math.gcd(self.num, self.den)
-        return (self.num // gcd) == 1
+        return self.num == 1 and self.den == 1
 
     def is_adjacent_to(self, other):
         """Check if two fractions differ by a unit fraction
