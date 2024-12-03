@@ -23,6 +23,34 @@ class TestFraction(unittest.TestCase):
         self.assertEqual(zero_fraction.denominator, 5)
         self.assertTrue(zero_fraction.is_zero())
 
+    def test_negative_values(self):
+        """Test si la fraction est correctement normalisée avec des valeurs négatives."""
+        fraction1 = Fraction(-5, -4)  # -5/-4 doit devenir 5/4
+        self.assertEqual(fraction1.numerator, 5)
+        self.assertEqual(fraction1.denominator, 4)
+
+        fraction2 = Fraction(5, -4)  # 5/-4 doit devenir -5/4
+        self.assertEqual(fraction2.numerator, -5)
+        self.assertEqual(fraction2.denominator, 4)
+
+        fraction3 = Fraction(-5, 4)  # -5/4 doit rester -5/4
+        self.assertEqual(fraction3.numerator, -5)
+        self.assertEqual(fraction3.denominator, 4)
+
+    def test_invalid_inputs(self):
+        """Test si des exceptions sont levées pour des entrées invalides."""
+        with self.assertRaises(TypeError):
+            Fraction("a", 2)  # Numérateur invalide
+
+        with self.assertRaises(TypeError):
+            Fraction(2, "b")  # Dénominateur invalide
+
+        with self.assertRaises(TypeError):
+            Fraction(2.5, 4)  # Numérateur flottant
+
+        with self.assertRaises(TypeError):
+            Fraction(4, 2.5)  # Dénominateur flottant
+
     # ------------------ Test Textual representations ------------------
 
     def test_str(self):
