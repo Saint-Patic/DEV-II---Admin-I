@@ -7,6 +7,7 @@ class TestFraction(unittest.TestCase):
         """Initialisation des fractions pour les tests."""
         self.fract1 = Fraction(5, 4)  # 5/4
         self.fract2 = Fraction(1, 2)  # 1/2
+        self.fract3 = Fraction(2, 2)  # 2/2
 
     # ------------------ Test Constructor ------------------
 
@@ -62,8 +63,9 @@ class TestFraction(unittest.TestCase):
         """Test la représentation en nombre mixte."""
         self.assertEqual(self.fract1.as_mixed_number(), "Partie entière : 1 | Reste : 1/4")
         self.assertEqual(self.fract2.as_mixed_number(), "Partie entière : 0 | Reste : 1/2")
+        self.assertEqual(self.fract3.as_mixed_number(), "Partie entière : 1 | Reste : 0")
 
-    # ------------------ Test Operators overloading ------------------
+        # ------------------ Test Operators overloading ------------------
 
     def test_addition(self):
         """Test la surcharge de l'opérateur +."""
