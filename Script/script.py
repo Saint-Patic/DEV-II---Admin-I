@@ -1,6 +1,7 @@
 import argparse
 import pandas as pd
 from pathlib import Path
+from tabulate import tabulate
 
 # Module de gestion de la base consolidée
 database = pd.DataFrame()
@@ -75,17 +76,32 @@ def search_inventory(criteria: str, value):
     else:
         print(f"Résultats trouvés pour {criteria} = {value} :\n{results}")
 
-def generate_report(output_path: str):
+def generate_report(output_path: str = None):
+    """
+    Génère un rapport récapitulatif sous forme de tableau.
+
+    PRE: La base de données contient des colonnes 'Category', 'Quantity' et 'UnitPrice'.
+    POST: Affiche un tableau dans la console et sauvegarde un fichier CSV si un chemin est fourni.
+    """
     global database
     if database.empty:
         print("La base consolidée est vide. Aucun rapport à générer.")
         return
+
+    # Générer le résumé des données
     summary = database.groupby('Category').agg(
         TotalQuantity=('Quantity', 'sum'),
         TotalValue=('UnitPrice', lambda x: (x * database.loc[x.index, 'Quantity']).sum())
-    )
-    summary.to_csv(output_path)
-    print(f"Rapport généré avec succès : {output_path}")
+    ).reset_index()  # Convertir en DataFrame avec les index réinitialisés
+
+    # Afficher le rapport dans la console sous forme de tableau
+    print("\n=== Rapport Récapitulatif ===")
+    print(tabulate(summary, headers='keys', tablefmt='grid', showindex=False))
+
+    # Sauvegarder le rapport dans un fichier si un chemin est fourni
+    if output_path:
+        summary.to_csv(output_path, index=False)
+        print(f"Rapport sauvegardé avec succès : {output_path}")
 
 def show_data():
     global database
@@ -95,43 +111,39 @@ def show_data():
         print("Données consolidées :")
         print(database)
 
+
 def interactive_mode():
     """
-    Démarre un mode interactif pour exécuter les commandes.
+    Intéraction en lignes de commandes
     """
-    print("=== Mode interactif : Gestion d'inventaire ===")
-    print("Entrez une commande ou 'help' pour voir les options.")
     while True:
-        command = input(">>> ").strip()
-        if command in ["exit", "quit"]:
-            print("Fin du mode interactif.")
-            break
-        elif command == "help":
-            print("""
-Commandes disponibles :
-  - import <fichier1> <fichier2> ... : Importer et consolider des fichiers CSV.
-  - search <colonne> <valeur>        : Rechercher des produits dans l'inventaire.
-  - report <fichier_output>          : Générer un rapport récapitulatif.
-  - show                             : Afficher les données consolidées.
-  - exit / quit                      : Quitter le mode interactif.
-  - help                             : Afficher cette aide.
-            """)
-        elif command.startswith("import "):
-            files = command.split()[1:]
+        print("""
+        Veuillez choisir une option :
+        1. Consolider les fichiers CSV
+        2. Afficher le CSV consolidé
+        3. Rechercher dans le CSV consolidé
+        4. Générer un rapport
+        5. Quitter
+        """)
+        choice = input("Votre choix (1-5) : ").strip()
+
+        if choice == "1":
+            files = input(
+                "Entrez les chemins des fichiers CSV à consolider (séparés par des espaces) : ").strip().split()
             consolidate_files([Path(file) for file in files])
-        elif command.startswith("search "):
-            try:
-                _, criteria, value = command.split(maxsplit=2)
-                search_inventory(criteria, value)
-            except ValueError:
-                print("Usage : search <colonne> <valeur>")
-        elif command.startswith("report "):
-            output_path = command.split(maxsplit=1)[1]
-            generate_report(output_path)
-        elif command == "show":
+        elif choice == "2":
             show_data()
+        elif choice == "3":
+            criteria = input("Entrez le nom de la colonne pour la recherche : ").strip()
+            value = input("Entrez la valeur à rechercher : ").strip()
+            search_inventory(criteria, value)
+        elif choice == "4":
+            output_path = input("Entrez le chemin du fichier de rapport à générer : ").strip()
+            generate_report(output_path)
+        elif choice == "5":
+            break
         else:
-            print("Commande inconnue. Tapez 'help' pour voir les options.")
+            print("Choix invalide. Veuillez entrer un chiffre entre 1 et 5.")
 
 def main():
     """
