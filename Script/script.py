@@ -78,21 +78,21 @@ def search_inventory(criteria: str, value):
 
 def generate_report(output_path: str = None):
     """
-    Génère un rapport récapitulatif sous forme de tableau.
+    Génère un rapport récapitulatif sous forme de tableau
 
-    PRE: La base de données contient des colonnes 'Category', 'Quantity' et 'UnitPrice'.
-    POST: Affiche un tableau dans la console et sauvegarde un fichier CSV si un chemin est fourni.
+    PRE: La base de données contient les colonnes 'Product', 'Category', 'Quantity', et 'UnitPrice'
+    POST: Affiche un tableau dans la console et sauvegarde un fichier CSV si un chemin est fourni
     """
     global database
     if database.empty:
         print("La base consolidée est vide. Aucun rapport à générer.")
         return
 
-    # Générer le résumé des données
-    summary = database.groupby('Category').agg(
+    # Générer un résumé détaillé en ajoutant le nom du produit
+    summary = database.groupby(['Category', 'Product']).agg(
         TotalQuantity=('Quantity', 'sum'),
         TotalValue=('UnitPrice', lambda x: (x * database.loc[x.index, 'Quantity']).sum())
-    ).reset_index()  # Convertir en DataFrame avec les index réinitialisés
+    ).reset_index()
 
     # Afficher le rapport dans la console sous forme de tableau
     print("\n=== Rapport Récapitulatif ===")
@@ -147,8 +147,7 @@ def interactive_mode():
 
 def main():
     """
-    Point d'entrée principal du programme.
-    Gère les commandes interactives ou non.
+    Gère les commandes interactives ou non
     """
     parser = argparse.ArgumentParser(description="Gestion d'inventaire consolidée.")
     parser.add_argument('--interactive', action='store_true', help="Lancer le programme en mode interactif.")
