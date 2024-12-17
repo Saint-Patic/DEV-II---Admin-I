@@ -19,7 +19,7 @@ def consolidate_files(file_paths: list[Path]):
     global database
     frames = []
     for file_path in file_paths:
-        data = load_csv(file_path)
+        data = load_csv(str(file_path))
         if not data.empty:
             print(f"Données chargées depuis {file_path} :\n{data.head()}")
             frames.append(data)
@@ -51,15 +51,29 @@ def load_database():
 
 def search_inventory(criteria: str, value):
     global database
-    print(database)
     if criteria not in database.columns:
         print(f"Critère '{criteria}' non valide. Colonnes disponibles : {', '.join(database.columns)}")
         return
+
+    # Convertir `value` au type correspondant à la colonne
+    column_type = database[criteria].dtype
+    try:
+        if column_type == 'int64':
+            value = int(value)
+        elif column_type == 'float64':
+            value = float(value)
+        # Sinon, on garde `value` tel quel (pour des colonnes texte)
+    except ValueError:
+        print(f"Impossible de convertir la valeur '{value}' au type attendu ({column_type}).")
+        return
+
+    # Effectuer la recherche
     results = database[database[criteria] == value]
     if results.empty:
         print("Aucun résultat trouvé.")
     else:
         print(f"Résultats trouvés pour {criteria} = {value} :\n{results}")
+
 
 def generate_report(output_path: str):
     global database
@@ -100,7 +114,7 @@ def main():
     report_parser.add_argument('output', help="Chemin pour sauvegarder le fichier de rapport CSV")
 
     # Commande 'show'
-    show_parser = subparsers.add_parser('show', help="Afficher les données consolidées")
+    subparsers.add_parser('show', help="Afficher les données consolidées")
 
     args = parser.parse_args()
 
