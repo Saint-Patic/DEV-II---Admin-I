@@ -1,0 +1,29 @@
+Product,Category,Quantity,UnitPrice,Color
+Laptop,Electronics,10,600.0,
+Headphones,Electronics,15,75.0,
+Smartphone,Electronics,25,200.0,
+Tablet,Electronics,5,300.0,
+Sander,Power Tools,7,85.0,
+Cordless Drill,Power Tools,4,120.0,
+Generator,Power Tools,3,450.0,
+Chainsaw,Power Tools,2,250.0,
+Angle Grinder,Power Tools,6,95.0,
+Paint,Painting Supplies,30,15.0,Green
+Paint,Painting Supplies,40,20.0,Blue
+Paint,Painting Supplies,20,18.0,Yellow
+Paint,Painting Supplies,35,17.5,Red
+Paint,Painting Supplies,25,16.0,White
+Laptop,Electronics,10,600.0,
+Headphones,Electronics,15,75.0,
+Smartphone,Electronics,25,200.0,
+Tablet,Electronics,5,300.0,
+Sander,Power Tools,7,85.0,
+Cordless Drill,Power Tools,4,120.0,
+Generator,Power Tools,3,450.0,
+Chainsaw,Power Tools,2,250.0,
+Angle Grinder,Power Tools,6,95.0,
+Paint,Painting Supplies,30,15.0,Green
+Paint,Painting Supplies,40,20.0,Blue
+Paint,Painting Supplies,20,18.0,Yellow
+Paint,Painting Supplies,35,17.5,Red
+Paint,Painting Supplies,25,16.0,White

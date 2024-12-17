@@ -1,0 +1,5 @@
+Product,Category,Quantity,UnitPrice,Color
+Laptop,Electronics,10,600.0,None
+Headphones,Electronics,15,75.0,None
+Smartphone,Electronics,25,200.0,None
+Tablet,Electronics,5,300.0,None
