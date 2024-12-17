@@ -6,46 +6,52 @@ from pathlib import Path
 database = pd.DataFrame()
 
 def load_csv(file_path: str) -> pd.DataFrame:
-    """
-    Charger un fichier CSV dans un DataFrame.
-
-    PRE : file_path est une chaîne non vide contenant un chemin valide vers un fichier CSV.
-    POST : Retourne un DataFrame contenant les données du fichier CSV ou une erreur claire en cas d'échec.
-    """
     try:
-        return pd.read_csv(file_path)
+        print(f"Tentative de chargement du fichier : {file_path}")
+        data = pd.read_csv(file_path)
+        print(f"Contenu chargé :\n{data}")
+        return data
     except Exception as e:
         print(f"Erreur lors du chargement du fichier CSV : {e}")
         return pd.DataFrame()
 
 def consolidate_files(file_paths: list[Path]):
-    """
-    Consolider plusieurs fichiers CSV dans une base unique.
-
-    PRE : file_paths est une liste de chemins valides vers des fichiers CSV.
-    POST : Met à jour la base consolidée globale avec les données combinées.
-    """
     global database
     frames = []
     for file_path in file_paths:
         data = load_csv(file_path)
         if not data.empty:
+            print(f"Données chargées depuis {file_path} :\n{data.head()}")
             frames.append(data)
+        else:
+            print(f"Fichier vide ou non valide : {file_path}")
     if frames:
-        database = pd.concat(frames, ignore_index=True)
+        database = pd.concat([database] + frames, ignore_index=True)
         print("Base consolidée mise à jour avec succès.")
+        save_database()  # Sauvegarder après consolidation
     else:
         print("Aucun fichier valide à consolider.")
 
-def search_inventory(criteria: str, value):
-    """
-    Rechercher dans l'inventaire selon un critère donné.
-
-    PRE : criteria est une chaîne correspondant à une colonne de la base consolidée.
-          value est la valeur à rechercher dans cette colonne.
-    POST : Retourne et affiche les résultats correspondants ou un message d'erreur.
-    """
+def save_database():
     global database
+    if not database.empty:
+        database.to_csv("consolidated_database.csv", index=False)
+        print("Base consolidée sauvegardée.")
+    else:
+        print("La base consolidée est vide, aucune sauvegarde effectuée.")
+
+def load_database():
+    global database
+    try:
+        database = pd.read_csv("consolidated_database.csv")
+        print("Base consolidée chargée avec succès.")
+    except FileNotFoundError:
+        print("Aucune base consolidée trouvée, démarrage avec une base vide.")
+        database = pd.DataFrame()
+
+def search_inventory(criteria: str, value):
+    global database
+    print(database)
     if criteria not in database.columns:
         print(f"Critère '{criteria}' non valide. Colonnes disponibles : {', '.join(database.columns)}")
         return
@@ -56,12 +62,6 @@ def search_inventory(criteria: str, value):
         print(f"Résultats trouvés pour {criteria} = {value} :\n{results}")
 
 def generate_report(output_path: str):
-    """
-    Générer un rapport récapitulatif des données consolidées.
-
-    PRE : output_path est un chemin valide pour sauvegarder le fichier CSV.
-    POST : Exporte un rapport contenant les résumés par catégorie et le stock total.
-    """
     global database
     if database.empty:
         print("La base consolidée est vide. Aucun rapport à générer.")
@@ -72,6 +72,15 @@ def generate_report(output_path: str):
     )
     summary.to_csv(output_path)
     print(f"Rapport généré avec succès : {output_path}")
+
+def show_data():
+    global database
+    print(database)
+    if database.empty:
+        print("La base consolidée est vide.")
+    else:
+        print("Données consolidées :")
+        print(database)
 
 def main():
     parser = argparse.ArgumentParser(description="Gestion d'inventaire consolidée.")
@@ -90,6 +99,9 @@ def main():
     report_parser = subparsers.add_parser('report', help="Générer un rapport récapitulatif")
     report_parser.add_argument('output', help="Chemin pour sauvegarder le fichier de rapport CSV")
 
+    # Commande 'show'
+    show_parser = subparsers.add_parser('show', help="Afficher les données consolidées")
+
     args = parser.parse_args()
 
     if args.command == 'import':
@@ -98,8 +110,11 @@ def main():
         search_inventory(args.criteria, args.value)
     elif args.command == 'report':
         generate_report(args.output)
+    elif args.command == 'show':
+        show_data()
     else:
         parser.print_help()
 
 if __name__ == "__main__":
+    load_database()  # Charger la base consolidée existante
     main()

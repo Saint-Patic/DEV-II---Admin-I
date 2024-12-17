@@ -1,6 +1,4 @@
-ProductID,ProductName,Category,Quantity,UnitPrice,Department
-101,Widget A,Gadgets,50,2.5,Electronics
-102,Widget B,Gadgets,30,3.0,Electronics
-103,Widget C,Tools,20,10.0,Hardware
-104,Widget D,Tools,15,7.5,Hardware
-105,Widget E,Supplies,100,1.0,Office
+Product,Category,Quantity,UnitPrice
+Hammer,Tools,15,10.5
+Drill,Tools,5,50.0
+Laptop,Electronics,10,600.0
