@@ -9,8 +9,11 @@ from script import (
     load_database,
     search_inventory,
     generate_report,
-    show_data
+    show_data,
+    interactive_mode
 )
+from unittest.mock import patch
+from io import StringIO
 
 
 class TestInventoryManagement(unittest.TestCase):
@@ -125,6 +128,63 @@ class TestInventoryManagement(unittest.TestCase):
         })
         show_data()
         self.assertFalse(database.empty)
+
+    # Tests pour le mode interactif
+    @patch("builtins.input", side_effect=["5"])
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_interactive_quit(self, mock_stdout, _):
+        """Tester l'option Quitter dans le mode interactif."""
+        interactive_mode()
+        output = mock_stdout.getvalue()
+        self.assertIn("Quitter", output)
+
+    @patch("builtins.input", side_effect=["1", "test_data1.csv", "5"])
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_interactive_consolidate(self, mock_stdout, _):
+        """Tester la consolidation via le mode interactif."""
+        test_file = "test_data1.csv"
+        pd.DataFrame({
+            "Product": ["A"],
+            "Category": ["Tools"],
+            "Quantity": [10],
+            "UnitPrice": [5.0]
+        }).to_csv(test_file, index=False)
+
+        interactive_mode()
+        output = mock_stdout.getvalue()
+        self.assertIn("Base consolidée mise à jour avec succès.", output)
+        os.remove(test_file)
+
+    @patch("builtins.input", side_effect=["2", "5"])
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_interactive_show_data(self, mock_stdout, _):
+        """Tester l'affichage des données dans le mode interactif."""
+        global database
+        database = pd.DataFrame({
+            "Product": ["A", "B"],
+            "Category": ["Tools", "Garden"],
+            "Quantity": [10, 20],
+            "UnitPrice": [5.0, 7.5]
+        })
+        interactive_mode()
+        output = mock_stdout.getvalue()
+        self.assertIn("Données consolidées :", output)
+
+    @patch("builtins.input", side_effect=["4", "test_report.csv", "5"])
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_interactive_generate_report(self, mock_stdout, _):
+        """Tester la génération de rapport dans le mode interactif."""
+        global database
+        database = pd.DataFrame({
+            "Product": ["A", "B"],
+            "Category": ["Tools", "Garden"],
+            "Quantity": [10, 20],
+            "UnitPrice": [5.0, 7.5]
+        })
+        interactive_mode()
+        output = mock_stdout.getvalue()
+        self.assertIn("Rapport sauvegardé avec succès", output)
+        self.assertTrue(os.path.exists("test_report.csv"))
 
 
 if __name__ == "__main__":
