@@ -129,7 +129,6 @@ class TestInventoryManagement(unittest.TestCase):
         show_data()
         self.assertFalse(database.empty)
 
-    # Tests pour le mode interactif
     @patch("builtins.input", side_effect=["5"])
     @patch("sys.stdout", new_callable=StringIO)
     def test_interactive_quit(self, mock_stdout, _):

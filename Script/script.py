@@ -7,16 +7,32 @@ from tabulate import tabulate
 database = pd.DataFrame()
 
 def load_csv(file_path: str) -> pd.DataFrame:
+    """
+    Charge un fichier CSV en DataFrame.
+
+    PRE: file_path est un chemin valide vers un fichier CSV.
+    POST: Retourne un DataFrame contenant les données du fichier CSV.
+    """
     try:
         print(f"Tentative de chargement du fichier : {file_path}")
         data = pd.read_csv(file_path)
         print(f"Contenu chargé :\n{data}")
         return data
+    except FileNotFoundError:
+        print(f"Fichier non trouvé : {file_path}")
+    except pd.errors.ParserError:
+        print(f"Erreur de format dans le fichier CSV : {file_path}")
     except Exception as e:
-        print(f"Erreur lors du chargement du fichier CSV : {e}")
-        return pd.DataFrame()
+        print(f"Erreur inattendue lors du chargement : {e}")
+    return pd.DataFrame()
 
 def consolidate_files(file_paths: list[Path]):
+    """
+    Consolide plusieurs fichiers CSV en une base de données unique.
+
+    PRE: file_paths est une liste de chemins vers des fichiers CSV.
+    POST: Met à jour la base de données consolidée et la sauvegarde.
+    """
     global database
     frames = []
     for file_path in file_paths:
@@ -34,6 +50,12 @@ def consolidate_files(file_paths: list[Path]):
         print("Aucun fichier valide à consolider.")
 
 def save_database():
+    """
+    Sauvegarde la base de données consolidée dans un fichier CSV.
+
+    PRE: La base de données peut être vide ou non.
+    POST: Sauvegarde la base dans un fichier "consolidated_database.csv".
+    """
     global database
     if not database.empty:
         database.to_csv("consolidated_database.csv", index=False)
@@ -42,6 +64,12 @@ def save_database():
         print("La base consolidée est vide, aucune sauvegarde effectuée.")
 
 def load_database():
+    """
+    Charge la base de données consolidée à partir d'un fichier CSV.
+
+    PRE: Le fichier "consolidated_database.csv" peut exister ou non.
+    POST: Charge la base de données dans le programme ou initialise une base vide.
+    """
     global database
     try:
         database = pd.read_csv("consolidated_database.csv")
@@ -50,7 +78,13 @@ def load_database():
         print("Aucune base consolidée trouvée, démarrage avec une base vide.")
         database = pd.DataFrame()
 
-def search_inventory(criteria: str, value):
+def search_inventory(criteria: str, value: str):
+    """
+    Recherche des éléments dans la base de données selon un critère et une valeur donnés.
+
+    PRE: criteria est une colonne existante dans la base de données.
+    POST: Affiche les résultats correspondants à la recherche.
+    """
     global database
     if criteria not in database.columns:
         print(f"Critère '{criteria}' non valide. Colonnes disponibles : {', '.join(database.columns)}")
@@ -78,32 +112,35 @@ def search_inventory(criteria: str, value):
 
 def generate_report(output_path: str = None):
     """
-    Génère un rapport récapitulatif sous forme de tableau
+    Génère un rapport récapitulatif sous forme de tableau.
 
-    PRE: La base de données contient les colonnes 'Product', 'Category', 'Quantity', et 'UnitPrice'
-    POST: Affiche un tableau dans la console et sauvegarde un fichier CSV si un chemin est fourni
+    PRE: La base de données contient les colonnes 'Product', 'Category', 'Quantity', et 'UnitPrice'.
+    POST: Affiche un tableau dans la console et sauvegarde un fichier CSV si un chemin est fourni.
     """
     global database
     if database.empty:
         print("La base consolidée est vide. Aucun rapport à générer.")
         return
 
-    # Générer un résumé détaillé en ajoutant le nom du produit
     summary = database.groupby(['Category', 'Product']).agg(
         TotalQuantity=('Quantity', 'sum'),
         TotalValue=('UnitPrice', lambda x: (x * database.loc[x.index, 'Quantity']).sum())
     ).reset_index()
 
-    # Afficher le rapport dans la console sous forme de tableau
     print("\n=== Rapport Récapitulatif ===")
     print(tabulate(summary, headers='keys', tablefmt='grid', showindex=False))
 
-    # Sauvegarder le rapport dans un fichier si un chemin est fourni
     if output_path:
         summary.to_csv(output_path, index=False)
         print(f"Rapport sauvegardé avec succès : {output_path}")
 
 def show_data():
+    """
+    Affiche les données consolidées.
+
+    PRE: La base consolidée peut être vide ou non.
+    POST: Affiche les données dans la console.
+    """
     global database
     if database.empty:
         print("La base consolidée est vide.")
@@ -111,10 +148,9 @@ def show_data():
         print("Données consolidées :")
         print(database)
 
-
 def interactive_mode():
     """
-    Intéraction en lignes de commandes
+    Lancer le programme en mode interactif pour une interaction utilisateur.
     """
     while True:
         print("""
@@ -128,8 +164,7 @@ def interactive_mode():
         choice = input("Votre choix (1-5) : ").strip()
 
         if choice == "1":
-            files = input(
-                "Entrez les chemins des fichiers CSV à consolider (séparés par des espaces) : ").strip().split()
+            files = input("Entrez les chemins des fichiers CSV à consolider (séparés par des espaces) : ").strip().split()
             consolidate_files([Path(file) for file in files])
         elif choice == "2":
             show_data()
@@ -147,7 +182,9 @@ def interactive_mode():
 
 def main():
     """
-    Gère les commandes interactives ou non
+    Point d'entrée principal du programme.
+
+    Gère les commandes interactives ou non.
     """
     parser = argparse.ArgumentParser(description="Gestion d'inventaire consolidée.")
     parser.add_argument('--interactive', action='store_true', help="Lancer le programme en mode interactif.")
